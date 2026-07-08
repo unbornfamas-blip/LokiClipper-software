@@ -6,15 +6,62 @@
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
-  <main class="app">
-    <section class="hero">
-      <div class="badge">V0.4.1 Desktop Core</div>
-      <h1>🐻 Loki<span>Clipper</span></h1>
-      <p>Professional creator clipping software is now running as a real desktop app.</p>
-      <button id="testBtn">Test Desktop Bridge</button>
-      <div id="result"></div>
-    </section>
-  </main>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">🐻 Loki<span>Clipper</span></div>
+
+      <nav>
+        <button class="active">Dashboard</button>
+        <button>Projects</button>
+        <button>Import Video</button>
+        <button>Smart Queue</button>
+        <button>Clip Review</button>
+        <button>Exports</button>
+        <button>Settings</button>
+      </nav>
+
+      <div class="version">V0.4.2 Creator Dashboard</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>Creator Dashboard</h1>
+          <p>Import a finished stream, let LokiClipper find the best moments, then review and export.</p>
+        </div>
+        <button id="testBtn">Test Desktop Bridge</button>
+      </header>
+
+      <section class="dashboard-grid">
+        <section class="card video-card">
+          <h2>Video Workspace</h2>
+          <div class="video-placeholder">
+            🎥
+            <span>Import a stream to begin</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Project Status</h2>
+          <p id="result">No project loaded.</p>
+        </section>
+
+        <section class="card">
+          <h2>Smart Queue</h2>
+          <div class="queue-item">Part 1 — Waiting</div>
+          <div class="queue-item">Part 2 — Waiting</div>
+          <div class="queue-item">Part 3 — Waiting</div>
+        </section>
+
+        <section class="card">
+          <h2>Resource Monitor</h2>
+          <p>CPU 12%</p>
+          <p>GPU 4%</p>
+          <p>RAM 8.2 GB</p>
+        </section>
+      </section>
+    </main>
+  </div>
 
   <script src="./js/app.js"></script>
 </body>
