@@ -20,7 +20,7 @@
         <button>Settings</button>
       </nav>
 
-      <div class="sidebar-footer">V0.4.4 Native Import</div>
+      <div class="sidebar-footer">V0.5.1 Video Player</div>
     </aside>
 
     <main class="workspace">
@@ -44,9 +44,26 @@
             <button id="importBtn">Import Video</button>
           </div>
 
-          <div class="video-placeholder" id="videoPlaceholder">
-            <div>🎥</div>
-            <span>Import a finished stream to begin</span>
+          <div class="video-frame" id="videoFrame">
+            <div class="video-placeholder" id="videoPlaceholder">
+              <div>🎥</div>
+              <span>Import a finished stream to create a project</span>
+            </div>
+
+            <video id="videoPlayer"></video>
+          </div>
+
+          <div class="player-controls">
+            <button id="playPauseBtn">▶ Play</button>
+            <button id="muteBtn">Mute</button>
+            <button id="fullscreenBtn">Fullscreen</button>
+          </div>
+
+          <input id="timeline" type="range" min="0" max="1000" value="0" />
+
+          <div class="time-row">
+            <span id="currentTime">00:00</span>
+            <span id="duration">00:00</span>
           </div>
         </section>
 
@@ -57,20 +74,21 @@
 
         <section class="panel queue-panel">
           <h2>Smart Queue</h2>
-          <div class="queue-item">Waiting for video import</div>
+          <div class="queue-item">Waiting for project</div>
         </section>
 
         <section class="panel">
-          <h2>Metadata</h2>
+          <h2>Project Metadata</h2>
           <p id="fileName">File: --</p>
           <p id="fileSize">Size: --</p>
-          <p id="filePath">Path: --</p>
+          <p id="projectFolder">Project Folder: --</p>
+          <p id="projectJson">Project JSON: --</p>
         </section>
       </section>
 
       <footer class="statusbar">
         <span id="statusLeft">🐻 LokiClipper ready</span>
-        <span>Desktop bridge connected</span>
+        <span>Embedded video player enabled</span>
       </footer>
     </main>
   </div>
