@@ -6,60 +6,72 @@
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
-  <div class="app">
+  <div class="app-shell">
     <aside class="sidebar">
-      <div class="logo">🐻 Loki<span>Clipper</span></div>
+      <div class="brand">🐻 Loki<span>Clipper</span></div>
 
-      <nav>
+      <nav class="nav">
         <button class="active">Dashboard</button>
         <button>Projects</button>
-        <button>Import Video</button>
+        <button id="importNavBtn">Import Video</button>
         <button>Smart Queue</button>
         <button>Clip Review</button>
         <button>Exports</button>
         <button>Settings</button>
       </nav>
 
-      <div class="version">V0.4.2 Creator Dashboard</div>
+      <div class="sidebar-footer">V0.4.4 Native Import</div>
     </aside>
 
-    <main class="main">
-      <header class="topbar">
+    <main class="workspace">
+      <header class="titlebar">
         <div>
-          <h1>Creator Dashboard</h1>
-          <p>Import a finished stream, let LokiClipper find the best moments, then review and export.</p>
+          <strong>Creator Workspace</strong>
+          <span id="projectTitle">No project loaded</span>
         </div>
-        <button id="testBtn">Test Desktop Bridge</button>
+
+        <div class="system-stats">
+          <span>CPU 12%</span>
+          <span>GPU 4%</span>
+          <span>RAM 8.2 GB</span>
+        </div>
       </header>
 
-      <section class="dashboard-grid">
-        <section class="card video-card">
-          <h2>Video Workspace</h2>
-          <div class="video-placeholder">
-            🎥
-            <span>Import a stream to begin</span>
+      <section class="workspace-grid">
+        <section class="panel video-panel">
+          <div class="panel-header">
+            <h2>Video Player</h2>
+            <button id="importBtn">Import Video</button>
+          </div>
+
+          <div class="video-placeholder" id="videoPlaceholder">
+            <div>🎥</div>
+            <span>Import a finished stream to begin</span>
           </div>
         </section>
 
-        <section class="card">
+        <section class="panel">
           <h2>Project Status</h2>
           <p id="result">No project loaded.</p>
         </section>
 
-        <section class="card">
+        <section class="panel queue-panel">
           <h2>Smart Queue</h2>
-          <div class="queue-item">Part 1 — Waiting</div>
-          <div class="queue-item">Part 2 — Waiting</div>
-          <div class="queue-item">Part 3 — Waiting</div>
+          <div class="queue-item">Waiting for video import</div>
         </section>
 
-        <section class="card">
-          <h2>Resource Monitor</h2>
-          <p>CPU 12%</p>
-          <p>GPU 4%</p>
-          <p>RAM 8.2 GB</p>
+        <section class="panel">
+          <h2>Metadata</h2>
+          <p id="fileName">File: --</p>
+          <p id="fileSize">Size: --</p>
+          <p id="filePath">Path: --</p>
         </section>
       </section>
+
+      <footer class="statusbar">
+        <span id="statusLeft">🐻 LokiClipper ready</span>
+        <span>Desktop bridge connected</span>
+      </footer>
     </main>
   </div>
 

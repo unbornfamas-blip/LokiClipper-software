@@ -1,6 +1,6 @@
 {
   "name": "lokiclipper",
-  "version": "0.4.1",
+  "version": "0.4.4",
   "description": "AI-powered desktop clipping software for streamers.",
   "main": "src/main/main.js",
   "scripts": {
