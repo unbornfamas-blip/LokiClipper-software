@@ -1,12 +1,9 @@
-import {
-  formatBytes,
-  formatTime,
-  formatThumbnailTimestamp,
-  formatFrameRate,
-  formatBitrate
-} from "./utils.js";
+import { initialiseMetadataPanel } from "./metadataPanel.js";
+import { initialiseThumbnailPanel } from "./thumbnailPanel.js";
 
 export function initialiseImportManager(videoPlayer) {
+  const { updateMetadataPanel } = initialiseMetadataPanel();
+  const { updateThumbnailPanel } = initialiseThumbnailPanel();
   const importBtn = document.getElementById("importBtn");
   const importNavBtn = document.getElementById("importNavBtn");
 
@@ -14,25 +11,10 @@ export function initialiseImportManager(videoPlayer) {
   const projectTitle = document.getElementById("projectTitle");
   const videoPlaceholder = document.getElementById("videoPlaceholder");
 
-  const fileName = document.getElementById("fileName");
-  const fileSize = document.getElementById("fileSize");
-
-  const videoDuration = document.getElementById("videoDuration");
-  const videoResolution = document.getElementById("videoResolution");
-  const videoFps = document.getElementById("videoFps");
-  const videoCodec = document.getElementById("videoCodec");
-  const audioCodec = document.getElementById("audioCodec");
-  const videoBitrate = document.getElementById("videoBitrate");
-
   const projectFolder = document.getElementById("projectFolder");
   const projectJson = document.getElementById("projectJson");
   const statusLeft = document.getElementById("statusLeft");
-
-  const projectThumbnail = document.getElementById("projectThumbnail");
-  const thumbnailPlaceholder = document.getElementById("thumbnailPlaceholder");
-  const thumbnailTimestamp = document.getElementById("thumbnailTimestamp");
-  const thumbnailPath = document.getElementById("thumbnailPath");
-
+  
   async function importVideo() {
     try {
       statusLeft.textContent = "🐻 Reading video metadata...";
@@ -47,51 +29,8 @@ export function initialiseImportManager(videoPlayer) {
       projectTitle.textContent = video.projectName;
       result.textContent = `${video.projectName} project created successfully.`;
 
-      fileName.textContent = `File: ${video.name}`;
-      fileSize.textContent = `Size: ${formatBytes(video.size)}`;
-
-      videoDuration.textContent =
-        `Duration: ${formatTime(video.metadata?.duration)}`;
-
-      videoResolution.textContent =
-        `Resolution: ${video.metadata?.width || "--"} × ${video.metadata?.height || "--"}`;
-
-      videoFps.textContent =
-        `FPS: ${formatFrameRate(video.metadata?.fps)}`;
-
-      videoCodec.textContent =
-        `Video Codec: ${video.metadata?.videoCodec?.toUpperCase() || "--"}`;
-
-      audioCodec.textContent =
-        `Audio Codec: ${video.metadata?.audioCodec?.toUpperCase() || "--"}`;
-
-      videoBitrate.textContent =
-        `Bitrate: ${formatBitrate(video.metadata?.bitrate)}`;
-
-      projectFolder.textContent =
-        `Project Folder: ${video.projectRoot}`;
-
-      projectJson.textContent =
-        `Project JSON: ${video.projectFile}`;
-
-      if (video.thumbnailUrl) {
-        projectThumbnail.src = video.thumbnailUrl;
-        projectThumbnail.classList.add("active");
-
-        thumbnailPlaceholder.style.display = "none";
-        thumbnailTimestamp.textContent =
-          formatThumbnailTimestamp(video.thumbnailTimestamp);
-
-        thumbnailPath.textContent =
-          `Thumbnail: ${video.thumbnailPath}`;
-      } else {
-        projectThumbnail.removeAttribute("src");
-        projectThumbnail.classList.remove("active");
-
-        thumbnailPlaceholder.style.display = "grid";
-        thumbnailTimestamp.textContent = "Generation failed";
-        thumbnailPath.textContent = "Thumbnail: --";
-      }
+      updateMetadataPanel(video);
+      updateThumbnailPanel(video);
 
       videoPlaceholder.style.display = "none";
       videoPlayer.src = video.url;
