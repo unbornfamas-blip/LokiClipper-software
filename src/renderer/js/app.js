@@ -7,8 +7,17 @@ const videoPlaceholder = document.getElementById("videoPlaceholder");
 
 const fileName = document.getElementById("fileName");
 const fileSize = document.getElementById("fileSize");
+
+const videoDuration = document.getElementById("videoDuration");
+const videoResolution = document.getElementById("videoResolution");
+const videoFps = document.getElementById("videoFps");
+const videoCodec = document.getElementById("videoCodec");
+const audioCodec = document.getElementById("audioCodec");
+const videoBitrate = document.getElementById("videoBitrate");
+
 const projectFolder = document.getElementById("projectFolder");
 const projectJson = document.getElementById("projectJson");
+
 const statusLeft = document.getElementById("statusLeft");
 
 const videoPlayer = document.getElementById("videoPlayer");
@@ -35,38 +44,89 @@ function formatBytes(bytes) {
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) return "00:00";
 
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
 
-  if (h > 0) {
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  if (hours > 0) {
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
 
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
+function formatFrameRate(frameRate) {
+
+  if (!frameRate) return "--";
+
+  const parts = frameRate.split("/");
+
+  if (parts.length !== 2) return frameRate;
+
+  return (Number(parts[0]) / Number(parts[1])).toFixed(2);
+
+}
+
+function formatBitrate(bits) {
+
+  if (!bits) return "--";
+
+  return `${(bits / 1000000).toFixed(2)} Mbps`;
+
 }
 
 async function importVideo() {
-  const video = await window.lokiAPI.selectVideo();
+  try {
+    statusLeft.textContent = "🐻 Reading video metadata...";
 
-  if (!video) {
-    statusLeft.textContent = "🐻 Import cancelled";
-    return;
+    const video = await window.lokiAPI.selectVideo();
+
+    if (!video) {
+      statusLeft.textContent = "🐻 Import cancelled";
+      return;
+    }
+
+    projectTitle.textContent = video.projectName;
+    result.textContent = `${video.projectName} project created successfully.`;
+
+    fileName.textContent = `File: ${video.name}`;
+    fileSize.textContent = `Size: ${formatBytes(video.size)}`;
+
+    videoDuration.textContent =
+      `Duration: ${formatTime(video.metadata?.duration)}`;
+
+    videoResolution.textContent =
+      `Resolution: ${video.metadata?.width || "--"} × ${video.metadata?.height || "--"}`;
+
+    videoFps.textContent =
+      `FPS: ${formatFrameRate(video.metadata?.fps)}`;
+
+    videoCodec.textContent =
+      `Video Codec: ${video.metadata?.videoCodec?.toUpperCase() || "--"}`;
+
+    audioCodec.textContent =
+      `Audio Codec: ${video.metadata?.audioCodec?.toUpperCase() || "--"}`;
+
+    videoBitrate.textContent =
+      `Bitrate: ${formatBitrate(video.metadata?.bitrate)}`;
+
+    projectFolder.textContent =
+      `Project Folder: ${video.projectRoot}`;
+
+    projectJson.textContent =
+      `Project JSON: ${video.projectFile}`;
+
+    videoPlaceholder.style.display = "none";
+    videoPlayer.src = video.url;
+    videoPlayer.classList.add("active");
+
+    statusLeft.textContent = "🐻 Video loaded with FFprobe metadata";
+  } catch (error) {
+    console.error("Video import failed:", error);
+
+    result.textContent = "Video import failed.";
+    statusLeft.textContent = `🐻 Import error: ${error.message || error}`;
   }
-
-  projectTitle.textContent = video.projectName;
-  result.textContent = `${video.projectName} project created successfully.`;
-
-  fileName.textContent = `File: ${video.name}`;
-  fileSize.textContent = `Size: ${formatBytes(video.size)}`;
-  projectFolder.textContent = `Project Folder: ${video.projectRoot}`;
-  projectJson.textContent = `Project JSON: ${video.projectFile}`;
-
-  videoPlaceholder.style.display = "none";
-  videoPlayer.src = video.url;
-  videoPlayer.classList.add("active");
-
-  statusLeft.textContent = "🐻 Video loaded into player";
 }
 
 playPauseBtn.addEventListener("click", () => {

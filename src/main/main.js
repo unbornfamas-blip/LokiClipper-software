@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const { getVideoMetadata } = require("../backend/video/videoMetadata");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -38,6 +39,14 @@ ipcMain.handle("video:select", async () => {
   const stats = fs.statSync(filePath);
   const fileName = path.basename(filePath);
   const projectName = safeFolderName(fileName);
+  let metadata;
+
+try {
+  metadata = await getVideoMetadata(filePath);
+} catch (error) {
+  console.error("FFprobe metadata error:", error);
+  throw error;
+}
 
   const projectsRoot = path.join(app.getPath("documents"), "LokiClipper", "Projects");
   const projectRoot = path.join(projectsRoot, projectName);
@@ -49,23 +58,38 @@ ipcMain.handle("video:select", async () => {
   const projectFile = path.join(projectRoot, "project.json");
 
   fs.writeFileSync(projectFile, JSON.stringify({
-    app: "LokiClipper",
-    version: "0.5.1",
-    projectName,
-    originalVideo: { path: filePath, name: fileName, size: stats.size },
-    createdAt: new Date().toISOString(),
-    status: "created"
-  }, null, 2), "utf8");
 
-  return {
+  app: "LokiClipper",
+  version: "0.5.2",
+  projectName,
+
+  originalVideo: {
+    path: filePath,
+    name: fileName,
+    size: stats.size
+  },
+
+  metadata,
+
+  createdAt: new Date().toISOString(),
+  status: "created"
+
+}, null, 2), "utf8");
+
+ return {
+
     path: filePath,
     url: `file://${filePath.replace(/\\/g, "/")}`,
     name: fileName,
     size: stats.size,
+
     projectName,
     projectRoot,
-    projectFile
-  };
+    projectFile,
+
+    metadata
+
+};
 });
 
 app.whenReady().then(createWindow);

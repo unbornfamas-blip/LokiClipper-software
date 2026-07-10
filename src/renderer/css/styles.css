@@ -237,3 +237,9 @@ button {
   font-size: 13px;
   margin-top: 8px;
 }
+
+.metadata-divider {
+  border: 0;
+  border-top: 1px solid #292933;
+  margin: 18px 0;
+}

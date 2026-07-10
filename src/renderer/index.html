@@ -20,8 +20,7 @@
         <button>Settings</button>
       </nav>
 
-      <div class="sidebar-footer">V0.5.1 Video Player</div>
-    </aside>
+    <div class="sidebar-footer">V0.5.2 Metadata Engine</div>    </aside>
 
     <main class="workspace">
       <header class="titlebar">
@@ -78,18 +77,27 @@
         </section>
 
         <section class="panel">
-          <h2>Project Metadata</h2>
-          <p id="fileName">File: --</p>
-          <p id="fileSize">Size: --</p>
-          <p id="projectFolder">Project Folder: --</p>
-          <p id="projectJson">Project JSON: --</p>
-        </section>
+  <h2>Video Metadata</h2>
+
+  <p id="fileName">File: --</p>
+  <p id="fileSize">Size: --</p>
+  <p id="videoDuration">Duration: --</p>
+  <p id="videoResolution">Resolution: --</p>
+  <p id="videoFps">FPS: --</p>
+  <p id="videoCodec">Video Codec: --</p>
+  <p id="audioCodec">Audio Codec: --</p>
+  <p id="videoBitrate">Bitrate: --</p>
+
+  <hr class="metadata-divider" />
+
+  <p id="projectFolder">Project Folder: --</p>
+  <p id="projectJson">Project JSON: --</p>
+</section>
       </section>
 
       <footer class="statusbar">
         <span id="statusLeft">🐻 LokiClipper ready</span>
-        <span>Embedded video player enabled</span>
-      </footer>
+        <span>FFprobe metadata engine enabled</span>      </footer>
     </main>
   </div>
 
