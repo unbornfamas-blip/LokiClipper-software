@@ -1,3 +1,13 @@
+import {
+  formatBytes,
+  formatTime,
+  formatThumbnailTimestamp,
+  formatFrameRate,
+  formatBitrate
+} from "./utils.js";
+
+import { initialiseVideoPlayer } from "./videoPlayer.js";
+
 const importBtn = document.getElementById("importBtn");
 const importNavBtn = document.getElementById("importNavBtn");
 
@@ -20,60 +30,13 @@ const projectJson = document.getElementById("projectJson");
 
 const statusLeft = document.getElementById("statusLeft");
 
-const videoPlayer = document.getElementById("videoPlayer");
-const playPauseBtn = document.getElementById("playPauseBtn");
-const muteBtn = document.getElementById("muteBtn");
-const fullscreenBtn = document.getElementById("fullscreenBtn");
-const timeline = document.getElementById("timeline");
-const currentTime = document.getElementById("currentTime");
-const duration = document.getElementById("duration");
+const videoPlayer = initialiseVideoPlayer();
 
-function formatBytes(bytes) {
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let value = bytes;
-  let unit = 0;
+const projectThumbnail = document.getElementById("projectThumbnail");
+const thumbnailPlaceholder = document.getElementById("thumbnailPlaceholder");
+const thumbnailTimestamp = document.getElementById("thumbnailTimestamp");
+const thumbnailPath = document.getElementById("thumbnailPath");
 
-  while (value >= 1024 && unit < units.length - 1) {
-    value /= 1024;
-    unit++;
-  }
-
-  return `${value.toFixed(value >= 10 ? 1 : 2)} ${units[unit]}`;
-}
-
-function formatTime(seconds) {
-  if (!Number.isFinite(seconds)) return "00:00";
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-
-  if (hours > 0) {
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  }
-
-  return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-}
-
-function formatFrameRate(frameRate) {
-
-  if (!frameRate) return "--";
-
-  const parts = frameRate.split("/");
-
-  if (parts.length !== 2) return frameRate;
-
-  return (Number(parts[0]) / Number(parts[1])).toFixed(2);
-
-}
-
-function formatBitrate(bits) {
-
-  if (!bits) return "--";
-
-  return `${(bits / 1000000).toFixed(2)} Mbps`;
-
-}
 
 async function importVideo() {
   try {
@@ -116,6 +79,24 @@ async function importVideo() {
     projectJson.textContent =
       `Project JSON: ${video.projectFile}`;
 
+      if (video.thumbnailUrl) {
+        projectThumbnail.src = video.thumbnailUrl;
+        projectThumbnail.classList.add("active");
+
+        thumbnailPlaceholder.style.display = "none";
+        thumbnailTimestamp.textContent =
+          formatThumbnailTimestamp(video.thumbnailTimestamp);
+
+        thumbnailPath.textContent =
+          `Thumbnail: ${video.thumbnailPath}`;
+      } else {
+        projectThumbnail.removeAttribute("src");
+        projectThumbnail.classList.remove("active");
+
+        thumbnailPlaceholder.style.display = "grid";
+        thumbnailTimestamp.textContent = "Generation failed";
+        thumbnailPath.textContent = "Thumbnail: --";
+      }
     videoPlaceholder.style.display = "none";
     videoPlayer.src = video.url;
     videoPlayer.classList.add("active");
@@ -128,44 +109,6 @@ async function importVideo() {
     statusLeft.textContent = `🐻 Import error: ${error.message || error}`;
   }
 }
-
-playPauseBtn.addEventListener("click", () => {
-  if (!videoPlayer.src) return;
-
-  if (videoPlayer.paused) {
-    videoPlayer.play();
-    playPauseBtn.textContent = "⏸ Pause";
-  } else {
-    videoPlayer.pause();
-    playPauseBtn.textContent = "▶ Play";
-  }
-});
-
-muteBtn.addEventListener("click", () => {
-  videoPlayer.muted = !videoPlayer.muted;
-  muteBtn.textContent = videoPlayer.muted ? "Unmute" : "Mute";
-});
-
-fullscreenBtn.addEventListener("click", () => {
-  if (videoPlayer.src) videoPlayer.requestFullscreen();
-});
-
-videoPlayer.addEventListener("loadedmetadata", () => {
-  duration.textContent = formatTime(videoPlayer.duration);
-});
-
-videoPlayer.addEventListener("timeupdate", () => {
-  if (!Number.isFinite(videoPlayer.duration)) return;
-
-  timeline.value = (videoPlayer.currentTime / videoPlayer.duration) * 1000;
-  currentTime.textContent = formatTime(videoPlayer.currentTime);
-});
-
-timeline.addEventListener("input", () => {
-  if (!Number.isFinite(videoPlayer.duration)) return;
-
-  videoPlayer.currentTime = (timeline.value / 1000) * videoPlayer.duration;
-});
 
 importBtn.addEventListener("click", importVideo);
 importNavBtn.addEventListener("click", importVideo);

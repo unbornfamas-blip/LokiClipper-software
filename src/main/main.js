@@ -1,7 +1,16 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog
+} = require("electron");
 const path = require("path");
 const fs = require("fs");
 const { getVideoMetadata } = require("../backend/video/videoMetadata");
+
+const {
+  generateThumbnail
+} = require("../backend/video/thumbnailGenerator");
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -57,6 +66,26 @@ try {
 
   const projectFile = path.join(projectRoot, "project.json");
 
+  const thumbnailPath = path.join(
+  projectRoot,
+  "thumbnails",
+  "thumbnail.jpg"
+);
+
+let thumbnail;
+
+try {
+  thumbnail = await generateThumbnail(
+    filePath,
+    thumbnailPath,
+    metadata.duration
+  );
+} catch (error) {
+  console.error("Thumbnail generation failed:", error);
+
+  thumbnail = null;
+}
+
   fs.writeFileSync(projectFile, JSON.stringify({
 
   app: "LokiClipper",
@@ -70,6 +99,12 @@ try {
   },
 
   metadata,
+  thumbnail: thumbnail
+  ? {
+      path: thumbnail.outputPath,
+      timestamp: thumbnail.timestamp
+    }
+  : null,
 
   createdAt: new Date().toISOString(),
   status: "created"
@@ -77,18 +112,20 @@ try {
 }, null, 2), "utf8");
 
  return {
+  path: filePath,
+  url: `file://${filePath.replace(/\\/g, "/")}`,
+  name: fileName,
+  size: stats.size,
+  projectName,
+  projectRoot,
+  projectFile,
+  metadata,
 
-    path: filePath,
-    url: `file://${filePath.replace(/\\/g, "/")}`,
-    name: fileName,
-    size: stats.size,
+  thumbnailPath: thumbnail?.outputPath || null,
 
-    projectName,
-    projectRoot,
-    projectFile,
-
-    metadata
-
+  thumbnailUrl: thumbnail
+    ? `file://${thumbnail.outputPath.replace(/\\/g, "/")}`
+    : null
 };
 });
 
