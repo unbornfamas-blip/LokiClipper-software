@@ -2,63 +2,171 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
   <title>LokiClipper</title>
-  <link rel="stylesheet" href="./css/styles.css" />
+
+  <link
+    rel="stylesheet"
+    href="./css/styles.css"
+  />
 </head>
+
 <body>
   <div class="app-shell">
+
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-      <div class="brand">🐻 Loki<span>Clipper</span></div>
+      <div class="brand">
+        🐻 Loki<span>Clipper</span>
+      </div>
 
       <nav class="nav">
-        <button class="active">Dashboard</button>
-        <button>Projects</button>
-        <button id="importNavBtn">Import Video</button>
-        <button>Smart Queue</button>
-        <button>Clip Review</button>
-        <button>Exports</button>
-        <button>Settings</button>
+        <button class="active" type="button">
+          🎬 Workspace
+        </button>
+
+        <button type="button">
+          📂 Projects
+        </button>
+
+        <button id="importNavBtn" type="button">
+          📥 Import Video
+        </button>
+
+        <div class="nav-divider"></div>
+
+        <button type="button">
+          🎥 Clip Review
+        </button>
+
+        <button type="button">
+          🤖 AI Analysis
+        </button>
+
+        <button type="button">
+          📤 Exports
+        </button>
+
+        <div class="nav-divider"></div>
+
+        <button type="button">
+          ⚙ Settings
+        </button>
       </nav>
 
-<div class="sidebar-footer">V0.5.3 Thumbnail Generator</div>
-</aside>
+      <div class="sidebar-footer">
+        V0.5.4 Workspace
+      </div>
+    </aside>
+
+    <!-- MAIN WORKSPACE -->
     <main class="workspace">
+
+      <!-- TOP BAR -->
       <header class="titlebar">
-        <div>
+        <div class="workspace-title">
           <strong>Creator Workspace</strong>
-          <span id="projectTitle">No project loaded</span>
+
+          <span id="projectTitle">
+            No project loaded
+          </span>
         </div>
 
-        <div class="system-stats">
-          <span>CPU 12%</span>
-          <span>GPU 4%</span>
-          <span>RAM 8.2 GB</span>
+        <div class="titlebar-actions">
+          <button
+            id="panelLockBtn"
+            class="panel-lock-button"
+            type="button"
+            aria-pressed="true"
+          >
+            🔒 Panels Locked
+          </button>
+
+          <div class="system-stats">
+            <span>CPU 12%</span>
+            <span>GPU 4%</span>
+            <span>RAM 8.2 GB</span>
+          </div>
         </div>
       </header>
 
-      <section class="workspace-grid">
-        <section class="panel video-panel">
+      <!-- RESPONSIVE PANEL GRID -->
+      <section
+        id="workspaceGrid"
+        class="workspace-grid panels-locked"
+      >
+
+        <!-- VIDEO PLAYER PANEL -->
+        <section
+          class="panel video-panel"
+          data-panel-id="video"
+        >
           <div class="panel-header">
-            <h2>Video Player</h2>
-            <button id="importBtn">Import Video</button>
+            <div class="panel-title-group">
+              <span class="panel-icon">🎥</span>
+
+              <div>
+                <h2>Video Player</h2>
+                <p>
+                  Preview and navigate your imported recording.
+                </p>
+              </div>
+            </div>
+
+            <div class="panel-header-actions">
+              <span class="panel-status">
+                Ready
+              </span>
+
+              <button id="importBtn" type="button">
+                Import Video
+              </button>
+            </div>
           </div>
 
-          <div class="video-frame" id="videoFrame">
-            <div class="video-placeholder" id="videoPlaceholder">
+          <div
+            class="video-frame"
+            id="videoFrame"
+          >
+            <div
+              class="video-placeholder"
+              id="videoPlaceholder"
+            >
               <div>🎥</div>
-              <span>Import a finished stream to create a project</span>
+
+              <span>
+                Import a finished stream to begin
+              </span>
             </div>
 
             <video id="videoPlayer"></video>
           </div>
 
           <div class="player-controls">
-            <button id="playPauseBtn">▶ Play</button>
-            <button id="muteBtn">Mute</button>
-            <button id="fullscreenBtn">Fullscreen</button>
+            <button id="playPauseBtn" type="button">
+              ▶ Play
+            </button>
+
+            <button id="muteBtn" type="button">
+              Mute
+            </button>
+
+            <button id="fullscreenBtn" type="button">
+              Fullscreen
+            </button>
           </div>
 
-          <input id="timeline" type="range" min="0" max="1000" value="0" />
+          <input
+            id="timeline"
+            type="range"
+            min="0"
+            max="1000"
+            value="0"
+          />
 
           <div class="time-row">
             <span id="currentTime">00:00</span>
@@ -66,64 +174,221 @@
           </div>
         </section>
 
-        <section class="panel project-status-panel">
-          <h2>Project Status</h2>
-          <p id="result">No project loaded.</p>
+        <!-- TIMELINE PANEL -->
+        <section
+          class="panel timeline-panel"
+          data-panel-id="timeline"
+        >
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🎵</span>
 
-  <div class="thumbnail-section">
-    <div class="thumbnail-header">
-      <strong>Project Thumbnail</strong>
-      <span id="thumbnailTimestamp">Not generated</span>
-    </div>
+              <div>
+                <h2>Timeline</h2>
 
-    <div class="thumbnail-frame" id="thumbnailFrame">
-      <div class="thumbnail-placeholder" id="thumbnailPlaceholder">
-        <div>🖼️</div>
-        <span>A preview image will appear after importing a video</span>
-      </div>
+                <p>
+                  Click the waveform to jump through the video.
+                </p>
+              </div>
+            </div>
 
-      <img
-        id="projectThumbnail"
-        alt="Automatically generated project thumbnail"
-      />
-    </div>
+            <span class="panel-status">
+              Waveform Ready
+            </span>
+          </div>
 
-    <p class="thumbnail-path" id="thumbnailPath">
-      Thumbnail: --
-    </p>
-  </div>
-</section>
+          <div
+            class="timeline-waveform"
+            id="timelinePanel"
+          >
+            <div
+              class="waveform-placeholder"
+              id="waveformPlaceholder"
+            >
+              <div>〰️</div>
 
-        <section class="panel queue-panel">
-          <h2>Smart Queue</h2>
-          <div class="queue-item">Waiting for project</div>
+              <span>
+                Import a video to generate its waveform
+              </span>
+            </div>
+
+            <img
+              id="waveformImage"
+              alt="Generated audio waveform"
+            />
+
+            <div
+              id="timelinePlayhead"
+              class="timeline-playhead"
+            ></div>
+          </div>
+
+          <div class="timeline-time-row">
+            <span id="timelineCurrentTime">
+              00:00
+            </span>
+
+            <span id="timelineDuration">
+              00:00
+            </span>
+          </div>
         </section>
 
-        <section class="panel">
-  <h2>Video Metadata</h2>
+        <!-- PROJECT PANEL -->
+        <section
+          class="panel project-panel"
+          data-panel-id="project"
+        >
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🖼️</span>
 
-  <p id="fileName">File: --</p>
-  <p id="fileSize">Size: --</p>
-  <p id="videoDuration">Duration: --</p>
-  <p id="videoResolution">Resolution: --</p>
-  <p id="videoFps">FPS: --</p>
-  <p id="videoCodec">Video Codec: --</p>
-  <p id="audioCodec">Audio Codec: --</p>
-  <p id="videoBitrate">Bitrate: --</p>
+              <div>
+                <h2>Project</h2>
 
-  <hr class="metadata-divider" />
+                <p id="result">
+                  No project loaded.
+                </p>
+              </div>
+            </div>
 
-  <p id="projectFolder">Project Folder: --</p>
-  <p id="projectJson">Project JSON: --</p>
-</section>
+            <span class="panel-status">
+              Project
+            </span>
+          </div>
+
+          <div class="thumbnail-section">
+            <div class="thumbnail-header">
+              <strong>Project Thumbnail</strong>
+
+              <span id="thumbnailTimestamp">
+                Not generated
+              </span>
+            </div>
+
+            <div
+              class="thumbnail-frame"
+              id="thumbnailFrame"
+            >
+              <div
+                class="thumbnail-placeholder"
+                id="thumbnailPlaceholder"
+              >
+                <div>🖼️</div>
+
+                <span>
+                  A preview image will appear after importing a video
+                </span>
+              </div>
+
+              <img
+                id="projectThumbnail"
+                alt="Automatically generated project thumbnail"
+              />
+            </div>
+
+            <p
+              class="thumbnail-path"
+              id="thumbnailPath"
+            >
+              Thumbnail: --
+            </p>
+          </div>
+        </section>
+
+        <!-- VIDEO INFORMATION PANEL -->
+        <section
+          class="panel metadata-panel"
+          data-panel-id="metadata"
+        >
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">📊</span>
+
+              <div>
+                <h2>Video Information</h2>
+
+                <p>
+                  Technical details for the imported file.
+                </p>
+              </div>
+            </div>
+
+            <span class="panel-status">
+              Metadata
+            </span>
+          </div>
+
+          <div class="metadata-grid">
+            <p id="fileName">File: --</p>
+            <p id="fileSize">Size: --</p>
+            <p id="videoDuration">Duration: --</p>
+            <p id="videoResolution">Resolution: --</p>
+            <p id="videoFps">FPS: --</p>
+            <p id="videoCodec">Video Codec: --</p>
+            <p id="audioCodec">Audio Codec: --</p>
+            <p id="videoBitrate">Bitrate: --</p>
+          </div>
+
+          <hr class="metadata-divider" />
+
+          <div class="metadata-paths">
+            <p id="projectFolder">
+              Project Folder: --
+            </p>
+
+            <p id="projectJson">
+              Project JSON: --
+            </p>
+          </div>
+        </section>
+
+        <!-- AI QUEUE PANEL -->
+        <section
+          class="panel queue-panel"
+          data-panel-id="queue"
+        >
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🤖</span>
+
+              <div>
+                <h2>AI Analysis Queue</h2>
+
+                <p>
+                  Smart Queue and AI jobs will appear here.
+                </p>
+              </div>
+            </div>
+
+            <span class="panel-status">
+              Idle
+            </span>
+          </div>
+
+          <div class="queue-item">
+            Waiting for analysis...
+          </div>
+        </section>
+
       </section>
 
+      <!-- STATUS BAR -->
       <footer class="statusbar">
-        <span id="statusLeft">🐻 LokiClipper ready</span>
-        <span>FFmpeg thumbnail generator enabled</span>
-        </footer>    </main>
+        <span id="statusLeft">
+          🐻 LokiClipper ready
+        </span>
+
+        <span>
+          Audio Analysis Engine enabled
+        </span>
+      </footer>
+    </main>
   </div>
 
-  <script type="module" src="./js/app.js"></script>
+  <script
+    type="module"
+    src="./js/app.js"
+  ></script>
 </body>
 </html>

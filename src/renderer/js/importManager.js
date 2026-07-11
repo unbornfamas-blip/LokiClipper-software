@@ -1,7 +1,11 @@
 import { initialiseMetadataPanel } from "./metadataPanel.js";
 import { initialiseThumbnailPanel } from "./thumbnailPanel.js";
 
-export function initialiseImportManager(videoPlayer) {
+export function initialiseImportManager(
+  videoPlayer,
+  updateTimelinePanel
+) {
+
   const { updateMetadataPanel } = initialiseMetadataPanel();
   const { updateThumbnailPanel } = initialiseThumbnailPanel();
   const importBtn = document.getElementById("importBtn");
@@ -31,6 +35,7 @@ export function initialiseImportManager(videoPlayer) {
 
       updateMetadataPanel(video);
       updateThumbnailPanel(video);
+      updateTimelinePanel(video);
 
       videoPlaceholder.style.display = "none";
       videoPlayer.src = video.url;
