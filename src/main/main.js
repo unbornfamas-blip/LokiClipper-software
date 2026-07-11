@@ -12,6 +12,10 @@ const {
   generateThumbnail
 } = require("../backend/video/thumbnailGenerator");
 
+const {
+  generateWaveform
+} = require("../backend/audio/waveformGenerator");
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
@@ -72,6 +76,26 @@ try {
   "thumbnail.jpg"
 );
 
+const waveformPath = path.join(
+  projectRoot,
+  "waveform",
+  "waveform.png"
+);
+
+let waveform;
+
+try {
+  waveform = await generateWaveform(
+    filePath,
+    waveformPath
+  );
+} catch (error) {
+  console.error("Waveform generation failed:", error);
+
+  // Do not prevent the rest of the project from loading.
+  waveform = null;
+}
+
 let thumbnail;
 
 try {
@@ -106,6 +130,14 @@ try {
     }
   : null,
 
+  waveform: waveform
+  ? {
+      path: waveform.outputPath,
+      width: waveform.width,
+      height: waveform.height
+    }
+  : null,
+
   createdAt: new Date().toISOString(),
   status: "created"
 
@@ -126,7 +158,21 @@ try {
   thumbnailUrl: thumbnail
     ? `file://${thumbnail.outputPath.replace(/\\/g, "/")}`
     : null
-};
+
+  ,
+  waveformPath: waveform?.outputPath || null,
+  get waveformPath() {
+    return this._waveformPath;
+  },
+  set waveformPath(value) {
+    this._waveformPath = value;
+  },
+    
+  waveformUrl: waveform
+  ? `file://${waveform.outputPath.replace(/\\/g, "/")}`
+  : null,
+
+  };
 });
 
 app.whenReady().then(createWindow);
