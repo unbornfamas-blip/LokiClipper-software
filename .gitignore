@@ -5,3 +5,9 @@ logs/
 projects/
 .env
 .DS_Store
+
+# Local AI runtime and model files
+AI/whisper/
+AI/**/*.bin
+AI/**/*.dll
+AI/**/*.exe
