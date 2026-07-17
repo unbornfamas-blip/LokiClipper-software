@@ -1,26 +1,53 @@
-import { initialiseVideoPlayer } from "./videoPlayer.js";
-import { initialiseImportManager } from "./importManager.js";
-import { initialiseTimelinePanel } from "./timelinePanel.js";
-import { initialiseLayoutManager } from "./layoutManager.js";
+import { 
+initialiseVideoPlayer 
+} from "./videoPlayer.js";
+
+import { 
+initialiseImportManager 
+} from "./importManager.js";
+
+import { 
+initialiseTimelinePanel 
+} from "./timelinePanel.js";
+
+import { 
+initialiseLayoutManager 
+} from "./layoutManager.js";
+
 import {
-  initialiseJobQueuePanel
+initialiseJobQueuePanel
 } from "./jobQueuePanel.js";
 
-const videoPlayer = initialiseVideoPlayer();
+import {
+    initialiseHookReviewPanel
+} from "./hookReviewPanel.js";
+
+
+const videoPlayer = 
+  initialiseVideoPlayer();
 
 const { updateTimelinePanel } =
   initialiseTimelinePanel(videoPlayer);
 
+const { renderHooks } =
+  initialiseHookReviewPanel(videoPlayer);
+
 initialiseImportManager(
   videoPlayer,
-  updateTimelinePanel
+  updateTimelinePanel,
+  renderHooks
 );
 
 initialiseLayoutManager();
 
-const {updateJob} = initialiseJobQueuePanel();
+const {updateJob} = 
+  initialiseJobQueuePanel();
 
 window.lokiAPI.onJobUpdated(job => {
-  console.log("Job received in renderer:", job);
+  console.log(
+    "Job received in renderer:", 
+    job
+  );
+  
   updateJob(job);
 });

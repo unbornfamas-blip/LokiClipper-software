@@ -15,6 +15,10 @@ const {
   runImportPipeline
 } = require("../backend/pipeline/importPipeline");
 
+const {
+  generateClipFromHook
+} = require("../backend/clip/clipService");
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
@@ -39,56 +43,83 @@ function createWindow() {
       !win.isDestroyed() &&
       !win.webContents.isDestroyed()
     ) {
-      win.webContents.send("job-updated", job);
+      win.webContents.send(
+        "job-updated",
+        job
+      );
     }
   };
 
-  jobEvents.on("jobUpdated", forwardJobUpdate);
+  jobEvents.on(
+    "jobUpdated",
+    forwardJobUpdate
+  );
 
   win.on("closed", () => {
-    jobEvents.off("jobUpdated", forwardJobUpdate);
+    jobEvents.off(
+      "jobUpdated",
+      forwardJobUpdate
+    );
   });
 
   win.loadFile(
-    path.join(__dirname, "../renderer/index.html")
+    path.join(
+      __dirname,
+      "../renderer/index.html"
+    )
   );
 }
 
-ipcMain.handle("video:select", async () => {
-  const result = await dialog.showOpenDialog({
-    title: "Import Video",
-    properties: ["openFile"],
-    filters: [
-      {
-        name: "Video Files",
-        extensions: [
-          "mp4",
-          "mov",
-          "mkv",
-          "webm",
-          "avi"
-        ]
-      }
-    ]
-  });
-
-  if (
-    result.canceled ||
-    result.filePaths.length === 0
-  ) {
-    return null;
+ipcMain.handle(
+  "clip:create",
+  async (_, options) => {
+    return generateClipFromHook(options);
   }
+);
 
-  return runImportPipeline({
-    filePath: result.filePaths[0],
-    documentsPath: app.getPath("documents")
-  });
-});
+ipcMain.handle(
+  "video:select",
+  async () => {
+    const result =
+      await dialog.showOpenDialog({
+        title: "Import Video",
+        properties: ["openFile"],
+        filters: [
+          {
+            name: "Video Files",
+            extensions: [
+              "mp4",
+              "mov",
+              "mkv",
+              "webm",
+              "avi"
+            ]
+          }
+        ]
+      });
+
+    if (
+      result.canceled ||
+      result.filePaths.length === 0
+    ) {
+      return null;
+    }
+
+    return runImportPipeline({
+      filePath: result.filePaths[0],
+      documentsPath:
+        app.getPath("documents")
+    });
+  }
+);
 
 app.whenReady().then(createWindow);
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
+app.on(
+  "window-all-closed",
+  () => {
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
   }
-});
+);

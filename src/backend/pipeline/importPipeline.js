@@ -21,6 +21,15 @@ const {
     transcribeAudio
 } = require("../whisper/whisperService");
 
+const {
+  parseTranscript,
+  saveParsedTranscript
+} = require("../whisper/transcriptParser");
+
+const {
+  detectHooksFromFile
+} = require("../analysis/hookDetector");
+
 const { JobTypes } = require("../jobs/jobTypes"); 
 
 const {
@@ -123,12 +132,24 @@ try {
   projectRoot,
   "analysis",
   "audio.wav"
+  );
+
+  const parsedTranscriptPath = path.join(
+  projectRoot,
+  "analysis",
+  "parsedTranscript.json"
+  );
+
+  const hookAnalysisPath = path.join(
+  projectRoot,
+  "analysis",
+  "hookCandidates.json"
 );
 
   const thumbnailJob = createRunningJob(
   JobTypes.THUMBNAIL,
   "Generating project thumbnail..."
-);
+  );
 
 let thumbnail = null;
 
@@ -224,6 +245,7 @@ const transcriptJob = createRunningJob(
 );
 
 let transcript = null;
+let parsedTranscript = null;
 
 try {
 
@@ -232,10 +254,19 @@ try {
     path.join(projectRoot, "analysis")
   );
 
-  completeJob(
-    transcriptJob,
-    "Transcript generated successfully."
-  );
+  const transcriptSegments =
+    parseTranscript(transcript.jsonPath);
+
+    parsedTranscript =
+      saveParsedTranscript(
+        transcriptSegments,
+        parsedTranscriptPath
+      );
+
+    completeJob(
+      transcriptJob,
+        `Transcript generated with ${parsedTranscript.segmentCount} segments.`
+);
 
 } catch (error) {
 
@@ -252,14 +283,44 @@ try {
 
 }
 
-createPendingJob(
+const analysisJob = createRunningJob(
   JobTypes.AI_ANALYSIS,
-  "Waiting for transcript."
+  "Analysing transcript..."
 );
+
+let hookAnalysis = null;
+
+try {
+
+  hookAnalysis =
+    detectHooksFromFile(
+      parsedTranscript.outputPath,
+      hookAnalysisPath
+    );
+
+  completeJob(
+    analysisJob,
+    `${hookAnalysis.candidateCount} hook candidates found.`
+  );
+
+} catch (error) {
+
+  failJob(
+    analysisJob,
+    error.message ||
+    "AI analysis failed."
+  );
+
+  console.error(
+    "Hook analysis failed:",
+    error
+  );
+
+}
 
   const projectData = {
     app: "LokiClipper",
-    version: "0.5.4",
+    version: "0.8.0-dev",
     projectName,
 
     originalVideo: {
@@ -272,31 +333,49 @@ createPendingJob(
 
     thumbnail: thumbnail
       ? {
-          path: thumbnail.outputPath,
-          timestamp: thumbnail.timestamp
+        path: thumbnail.outputPath,
+        timestamp: thumbnail.timestamp
         }
       : null,
 
     waveform: waveform
       ? {
-          path: waveform.outputPath,
-          width: waveform.width,
-          height: waveform.height
+        path: waveform.outputPath,
+        width: waveform.width,
+        height: waveform.height
         }
       : null,
 
     audio: audio
       ? {
-          path: audio.outputPath
-        }
+        path: audio.outputPath
+      }
       : null,
 
     transcript: transcript
       ? {
-      path: transcript.jsonPath
+        path: transcript.jsonPath
       }
     : null,
 
+    parsedTranscript: parsedTranscript
+      ? {
+        path: parsedTranscript.outputPath,
+        segmentCount: parsedTranscript.segmentCount,
+        version: 1
+      }
+    : null,
+
+    hookAnalysis: {
+    path: hookAnalysis.outputPath,
+    candidateCount: hookAnalysis.candidateCount,
+    formatVersion: 1
+},
+
+clips: {
+    formatVersion: 1,
+    items: []
+},
     createdAt: new Date().toISOString(),
     status: "created"
   };
@@ -345,6 +424,9 @@ createPendingJob(
       audio
         ? toFileUrl(audio.outputPath)
         : null,
+
+    hookCandidates:
+      hookAnalysis?.hooks || [],
   };
 }
 

@@ -355,6 +355,54 @@
               <div>
                 <h2>AI Analysis Queue</h2>
 
+        <section
+          class="panel hook-review-panel"
+          data-panel-id="hook-review"
+>
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🎯</span>
+
+              <div>
+                <h2>Hook Candidates</h2>
+                  <p>
+              Review the strongest moments found by LokiClipper.
+                  </p>
+            </div>
+          </div>
+
+        <span
+          class="panel-status"
+          id="hookCount"
+            >
+            0 Found
+          </span>
+        </div>
+
+        <div
+          class="hook-candidate-list"
+          id="hookCandidateList"
+  >
+        <div class="job-queue-empty">
+          Import a video to generate hook candidates.
+          </div>
+        </div>
+      </section>
+
+        <div class="hook-actions">
+          <button
+            id="createClipBtn"
+            type="button"
+            disabled
+          >
+            ✂ Create Selected Clip
+          </button>
+
+          <span id="clipActionStatus">
+            Select a clip suggestion
+          </span>
+        </div>
+
                 <p>
                   Smart Queue and AI jobs will appear here.
                 </p>

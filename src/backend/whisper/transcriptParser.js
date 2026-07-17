@@ -1,30 +1,73 @@
 const fs = require("fs");
 
 function parseTranscript(jsonPath) {
+  const rawJson = fs.readFileSync(
+    jsonPath,
+    "utf8"
+  );
 
-    const json = JSON.parse(
-        fs.readFileSync(jsonPath, "utf8")
-    );
+  const json = JSON.parse(rawJson);
 
-    const segments = json.transcription ?? [];
+  const transcription =
+    Array.isArray(json.transcription)
+      ? json.transcription
+      : [];
 
-    return segments.map(segment => ({
+  return transcription
+    .map(segment => {
+      const from =
+        Number(segment.offsets?.from);
 
-        start: segment.offsets.from / 1000,
+      const to =
+        Number(segment.offsets?.to);
 
-        end: segment.offsets.to / 1000,
+      const text =
+        String(segment.text || "").trim();
 
-        duration:
-            (segment.offsets.to -
-             segment.offsets.from) / 1000,
+      if (
+        !Number.isFinite(from) ||
+        !Number.isFinite(to) ||
+        !text
+      ) {
+        return null;
+      }
 
-        text:
-            segment.text.trim()
+      return {
+        start: from / 1000,
+        end: to / 1000,
+        duration: (to - from) / 1000,
+        text
+      };
+    })
+    .filter(Boolean);
+}
 
-    }));
+function saveParsedTranscript(
+  segments,
+  outputPath
+) {
+  fs.writeFileSync(
+    outputPath,
+    JSON.stringify(
+      {
+        format: "LokiClipper Transcript",
+        version: 1,
+        segmentCount: segments.length,
+        segments
+      },
+      null,
+      2
+    ),
+    "utf8"
+  );
 
+  return {
+    outputPath,
+    segmentCount: segments.length
+  };
 }
 
 module.exports = {
-    parseTranscript
+  parseTranscript,
+  saveParsedTranscript
 };

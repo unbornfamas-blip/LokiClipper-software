@@ -1003,3 +1003,17 @@ p {
 .job-cancelled {
   opacity: 0.65;
 }
+
+.hook-candidate-list .hook-card.active {
+  border: 2px solid #a855f7;
+  background: rgba(168, 85, 247, 0.14);
+  box-shadow:
+    0 0 0 3px rgba(168, 85, 247, 0.18),
+    0 10px 30px rgba(0, 0, 0, 0.35);
+  transform: none;
+}
+
+.hook-card {
+  width: 100%;
+  border: 1px solid #292933;
+}
