@@ -40,11 +40,17 @@ const {
 } = require("../jobs/jobFactory");
 
 function safeFolderName(name) {
-  return name
+  const cleanedName = String(name)
     .replace(/\.[^/.]+$/, "")
+    .normalize("NFKD")
+    .replace(/[^\x00-\x7F]/g, "")
     .replace(/[<>:"/\\|?*]/g, "")
-    .replace(/\s+/g, "_")
+    .replace(/[^a-zA-Z0-9_-]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "")
     .trim();
+
+  return cleanedName || `project_${Date.now()}`;
 }
 
 function toFileUrl(filePath) {
@@ -290,32 +296,33 @@ const analysisJob = createRunningJob(
 
 let hookAnalysis = null;
 
-try {
-
-  hookAnalysis =
-    detectHooksFromFile(
+if (!parsedTranscript?.outputPath) {
+  failJob(
+    analysisJob,
+    "AI analysis skipped because no parsed transcript was created."
+  );
+} else {
+  try {
+    hookAnalysis = detectHooksFromFile(
       parsedTranscript.outputPath,
       hookAnalysisPath
     );
 
-  completeJob(
-    analysisJob,
-    `${hookAnalysis.candidateCount} hook candidates found.`
-  );
+    completeJob(
+      analysisJob,
+      `${hookAnalysis.candidateCount} hook candidates found.`
+    );
+  } catch (error) {
+    failJob(
+      analysisJob,
+      error.message || "AI analysis failed."
+    );
 
-} catch (error) {
-
-  failJob(
-    analysisJob,
-    error.message ||
-    "AI analysis failed."
-  );
-
-  console.error(
-    "Hook analysis failed:",
-    error
-  );
-
+    console.error(
+      "Hook analysis failed:",
+      error
+    );
+  }
 }
 
   const projectData = {
@@ -366,13 +373,16 @@ try {
       }
     : null,
 
-    hookAnalysis: {
-    path: hookAnalysis.outputPath,
-    candidateCount: hookAnalysis.candidateCount,
-    formatVersion: 1
-},
+    hookAnalysis: hookAnalysis
+      ? {
+          path: hookAnalysis.outputPath,
+          candidateCount:
+            hookAnalysis.candidateCount,
+          formatVersion: 1
+        }
+      : null,
+    clips: {
 
-clips: {
     formatVersion: 1,
     items: []
 },

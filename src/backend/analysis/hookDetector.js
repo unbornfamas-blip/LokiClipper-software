@@ -2,10 +2,10 @@ const fs = require("fs");
 
 const HOOK_PATTERNS = [
   {
-    name: "surprise",
-    score: 20,
-    pattern:
-      /\b(what|wait|whoa|wow|oh my god|no way|seriously)\b/i
+  name: "surprise",
+  score: 24,
+  pattern:
+    /\b(oh my god|no way|what the (?:fuck|hell)|what is that|wait[,.! ]+what|whoa+|wow+|yo[!,. ]|you['’]?re joking|got to be a joke)\b/i
   },
   {
     name: "strong reaction",
@@ -15,7 +15,7 @@ const HOOK_PATTERNS = [
   },
   {
     name: "question",
-    score: 12,
+    score: 6,
     pattern:
       /\b(why|how|what|who|where|when)\b.*\?/i
   },
@@ -90,20 +90,54 @@ function detectHooks(segments, options = {}) {
   const minimumScore =
     Number.isFinite(options.minimumScore)
       ? options.minimumScore
-      : 20;
+      : 28;
 
   const maximumResults =
     Number.isFinite(options.maximumResults)
       ? options.maximumResults
       : 20;
 
-  return segments
-    .map(scoreSegment)
-    .filter(candidate =>
-      candidate.score >= minimumScore
-    )
-    .sort((a, b) => b.score - a.score)
-    .slice(0, maximumResults);
+const scoredCandidates = segments
+  .map(scoreSegment)
+  .filter(candidate =>
+    candidate.score >= minimumScore
+  );
+
+const bucketSizeSeconds = 300;
+const maximumPerBucket = 4;
+const buckets = new Map();
+
+for (const candidate of scoredCandidates) {
+  const bucketIndex =
+    Math.floor(
+      candidate.start /
+      bucketSizeSeconds
+    );
+
+  if (!buckets.has(bucketIndex)) {
+    buckets.set(bucketIndex, []);
+  }
+
+  buckets
+    .get(bucketIndex)
+    .push(candidate);
+}
+
+const balancedCandidates =
+  [...buckets.values()]
+    .flatMap(bucket =>
+      bucket
+        .sort((a, b) =>
+          b.score - a.score
+        )
+        .slice(0, maximumPerBucket)
+    );
+
+return balancedCandidates
+  .sort((a, b) =>
+    b.score - a.score
+  )
+  .slice(0, maximumResults);
 }
 
 function detectHooksFromFile(

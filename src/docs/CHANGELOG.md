@@ -32,3 +32,16 @@
 - Playback controls
 - Timeline
 - Fullscreen support
+
+# LokiClipper V0.6.0
+
+## 🎬 AI Clip Generation
+
+- Added first working AI clip generation engine.
+- Hook candidates can now be selected from the review panel.
+- Create Selected Clip exports an MP4 using FFmpeg.
+- Added Electron IPC clip generation pipeline.
+- Added clipService backend.
+- Added project clip output folders.
+- Hook Review UI now supports persistent selection.
+- Improved import pipeline metadata.

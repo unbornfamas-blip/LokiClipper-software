@@ -9,8 +9,10 @@ import {
 export function initialiseImportManager(
   videoPlayer,
   updateTimelinePanel,
-  renderHooks
+  renderHooks,
+  addClip
 ) {
+      
   const { updateMetadataPanel } =
     initialiseMetadataPanel();
 

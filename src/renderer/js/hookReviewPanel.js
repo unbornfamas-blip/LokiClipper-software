@@ -10,7 +10,8 @@ function escapeHtml(value) {
 }
 
 export function initialiseHookReviewPanel(
-  videoPlayer
+  videoPlayer,
+  addClip
 ) {
   const hookCount =
     document.getElementById("hookCount");
@@ -222,6 +223,23 @@ export function initialiseHookReviewPanel(
             transcript:
               selectedHook.text || ""
           });
+
+        const clipDisplayName =
+        selectedHook.text
+            .replace(/[<>:"/\\|?*]/g, "")
+            .trim()
+            .split(/\s+/)
+            .slice(0, 6)
+            .join(" ");
+
+        addClip({
+        name:
+            clipDisplayName ||
+            `Clip ${Date.now()}`,
+        path: clip.outputPath,
+        score: selectedHook.score,
+        duration: clip.duration
+        });
 
         console.log(
           "Clip created:",
