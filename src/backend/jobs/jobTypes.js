@@ -4,6 +4,7 @@ const JobTypes = Object.freeze({
   WAVEFORM: "waveform",
   AUDIO_EXTRACTION: "audio-extraction",
   TRANSCRIPT: "transcript",
+  VOICE_ANALYSIS: "voice-analysis",
   AI_ANALYSIS: "ai-analysis",
   CLIP_GENERATION: "clip-generation",
   FACE_TRACKING: "face-tracking",

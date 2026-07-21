@@ -19,6 +19,11 @@ const {
   generateClipFromHook
 } = require("../backend/clip/clipService");
 
+const {
+    getProjects,
+    openProject
+} = require("../backend/project/projectManager");
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
@@ -110,6 +115,28 @@ ipcMain.handle(
       documentsPath:
         app.getPath("documents")
     });
+  }
+);
+
+ipcMain.handle(
+    "projects:getAll",
+    async () => {
+
+        return getProjects(
+            app.getPath(
+                "documents"
+            )
+        );
+
+    }
+);
+
+ipcMain.handle(
+  "projects:open",
+  async (_, projectJsonPath) => {
+    return openProject(
+      projectJsonPath
+    );
   }
 );
 

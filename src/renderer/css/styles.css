@@ -336,6 +336,36 @@ p {
   grid-column: 1 / -1;
 }
 
+.hook-review-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.generated-clips-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.queue-panel {
+  grid-column: 1 / -1;
+}
+
+.hook-candidate-list,
+.generated-clip-list {
+  min-width: 0;
+  width: 100%;
+}
+
+.hook-actions {
+  margin-top: 16px;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
 .panel-header {
   margin-bottom: 18px;
 
@@ -758,7 +788,9 @@ p {
 
 @media (max-width: 1200px) {
   .project-panel,
-  .metadata-panel {
+  .metadata-panel,
+  .hook-review-panel,
+  .generated-clips-panel {
     grid-column: 1 / -1;
   }
 }
@@ -1016,4 +1048,101 @@ p {
 .hook-card {
   width: 100%;
   border: 1px solid #292933;
+}
+
+/* ==========================================================
+   PROJECTS PAGE
+========================================================== */
+
+.projects-view {
+    padding: var(--space-5);
+    overflow-y: auto;
+    height: 100%;
+    background: var(--background);
+}
+
+.projects-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+}
+
+.projects-page-header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.projects-page-header p {
+    margin-top: 6px;
+    color: var(--text-muted);
+}
+
+.projects-page-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-4);
+}
+
+.project-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--panel-radius);
+    padding: 18px;
+    cursor: pointer;
+    transition: 0.18s ease;
+    text-align: left;
+}
+
+.project-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+.project-card strong {
+    display: block;
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+.project-card span {
+    display: block;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.projects-page-grid .project-card {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-soft);
+}
+
+.projects-page-grid .project-card strong {
+  display: block;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.projects-page-grid .project-card span {
+  color: var(--text-muted);
+}
+
+.projects-page-grid .project-card {
+  overflow-wrap: anywhere;
+}
+
+#refreshProjectsBtn {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent-blue),
+      var(--accent-purple)
+    );
+  color: white;
+  font-weight: 700;
 }

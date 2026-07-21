@@ -39,6 +39,73 @@ export function initialiseImportManager(
   const statusLeft =
     document.getElementById("statusLeft");
 
+    function loadVideoIntoWorkspace(
+  video,
+  message =
+    "Project loaded successfully."
+) {
+  projectTitle.textContent =
+    video.projectName;
+
+  result.textContent =
+    message;
+
+  updateMetadataPanel(video);
+  updateThumbnailPanel(video);
+  updateTimelinePanel(video);
+
+  renderHooks(
+    video.hookCandidates || []
+  );
+
+  if (
+    Array.isArray(
+      video.generatedClips
+    )
+  ) {
+    for (
+      const clip of
+      video.generatedClips
+    ) {
+      addClip({
+        name:
+          clip.name ||
+          clip.fileName,
+
+        path:
+          clip.path,
+
+        score:
+          clip.score ?? null,
+
+        duration:
+          clip.duration ?? null
+      });
+    }
+  }
+
+  videoPlaceholder.style.display =
+    "none";
+
+  videoPlayer.src =
+    video.url;
+
+  videoPlayer.dataset.filePath =
+    video.path;
+
+  videoPlayer.dataset.projectRoot =
+    video.projectRoot;
+
+  videoPlayer.dataset.clipsDirectory =
+    `${video.projectRoot}\\clips`;
+
+  videoPlayer.classList.add(
+    "active"
+  );
+
+  videoPlayer.load();
+}
+
   async function importVideo() {
     try {
       statusLeft.textContent =
@@ -54,32 +121,10 @@ export function initialiseImportManager(
         return;
       }
 
-      projectTitle.textContent =
-        video.projectName;
-
-      result.textContent =
-        `${video.projectName} project created successfully.`;
-
-      updateMetadataPanel(video);
-      updateThumbnailPanel(video);
-      updateTimelinePanel(video);
-      renderHooks(video.hookCandidates);
-
-      videoPlaceholder.style.display =
-        "none";
-
-      videoPlayer.src = video.url;
-
-      videoPlayer.dataset.filePath =
-        video.path;
-
-      videoPlayer.dataset.projectRoot =
-        video.projectRoot;
-
-      videoPlayer.dataset.clipsDirectory =
-        `${video.projectRoot}\\clips`;
-
-      videoPlayer.classList.add("active");
+      loadVideoIntoWorkspace(
+        video,
+        `${video.projectName} project created successfully.`
+      );
 
       statusLeft.textContent =
         "🐻 Video loaded with FFprobe metadata";
@@ -108,4 +153,8 @@ export function initialiseImportManager(
     "click",
     importVideo
   );
+
+    return {
+    loadVideoIntoWorkspace
+  };
 }

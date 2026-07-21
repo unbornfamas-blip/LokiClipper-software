@@ -86,6 +86,10 @@ function scoreSegment(segment) {
   };
 }
 
+const {
+  fuseSignals
+} = require("./signalFusion");
+
 function detectHooks(segments, options = {}) {
   const minimumScore =
     Number.isFinite(options.minimumScore)
@@ -99,6 +103,13 @@ function detectHooks(segments, options = {}) {
 
 const scoredCandidates = segments
   .map(scoreSegment)
+  .map(candidate => ({
+    ...candidate,
+    ...fuseSignals(
+      candidate,
+      options.voiceAnalysis
+    )
+  }))
   .filter(candidate =>
     candidate.score >= minimumScore
   );
@@ -142,7 +153,8 @@ return balancedCandidates
 
 function detectHooksFromFile(
   parsedTranscriptPath,
-  outputPath
+  outputPath,
+  voiceAnalysis = null
 ) {
   const transcript = JSON.parse(
     fs.readFileSync(
@@ -156,7 +168,12 @@ function detectHooksFromFile(
       ? transcript.segments
       : [];
 
-  const hooks = detectHooks(segments);
+  const hooks = detectHooks(
+  segments,
+  {
+    voiceAnalysis
+  }
+);
 
   const result = {
     format: "LokiClipper Hook Candidates",

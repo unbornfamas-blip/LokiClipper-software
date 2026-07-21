@@ -25,15 +25,25 @@
       </div>
 
       <nav class="nav">
-        <button class="active" type="button">
+        <button
+          id="workspaceNavBtn"
+          class="active"
+          type="button"
+        >
           🎬 Workspace
         </button>
 
-        <button type="button">
+        <button
+          id="projectsNavBtn"
+          type="button"
+        >
           📂 Projects
         </button>
 
-        <button id="importNavBtn" type="button">
+        <button
+          id="importNavBtn"
+          type="button"
+        >
           📥 Import Video
         </button>
 
@@ -111,6 +121,7 @@
 
               <div>
                 <h2>Video Player</h2>
+
                 <p>
                   Preview and navigate your imported recording.
                 </p>
@@ -122,7 +133,10 @@
                 Ready
               </span>
 
-              <button id="importBtn" type="button">
+              <button
+                id="importBtn"
+                type="button"
+              >
                 Import Video
               </button>
             </div>
@@ -147,15 +161,24 @@
           </div>
 
           <div class="player-controls">
-            <button id="playPauseBtn" type="button">
+            <button
+              id="playPauseBtn"
+              type="button"
+            >
               ▶ Play
             </button>
 
-            <button id="muteBtn" type="button">
+            <button
+              id="muteBtn"
+              type="button"
+            >
               Mute
             </button>
 
-            <button id="fullscreenBtn" type="button">
+            <button
+              id="fullscreenBtn"
+              type="button"
+            >
               Fullscreen
             </button>
           </div>
@@ -343,6 +366,92 @@
           </div>
         </section>
 
+        <!-- HOOK REVIEW PANEL -->
+        <section
+          class="panel hook-review-panel"
+          data-panel-id="hook-review"
+        >
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🎯</span>
+
+              <div>
+                <h2>Hook Candidates</h2>
+
+                <p>
+                  Review the strongest moments found by LokiClipper.
+                </p>
+              </div>
+            </div>
+
+            <span
+              class="panel-status"
+              id="hookCount"
+            >
+              0 Found
+            </span>
+          </div>
+
+          <div
+            class="hook-candidate-list"
+            id="hookCandidateList"
+          >
+            <div class="job-queue-empty">
+              Import a video to generate hook candidates.
+            </div>
+          </div>
+
+          <div class="hook-actions">
+            <button
+              id="createClipBtn"
+              type="button"
+              disabled
+            >
+              ✂ Create Selected Clip
+            </button>
+
+            <span id="clipActionStatus">
+              Select a clip suggestion
+            </span>
+          </div>
+        </section>
+
+        <!-- GENERATED CLIPS PANEL -->
+        <section
+          class="panel generated-clips-panel"
+          data-panel-id="generated-clips"
+        >
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">🎬</span>
+
+              <div>
+                <h2>Generated Clips</h2>
+
+                <p>
+                  Clips created from your selected suggestions.
+                </p>
+              </div>
+            </div>
+
+            <span
+              class="panel-status"
+              id="generatedClipCount"
+            >
+              0 Clips
+            </span>
+          </div>
+
+          <div
+            class="generated-clip-list"
+            id="generatedClipList"
+          >
+            <div class="job-queue-empty">
+              Created clips will appear here.
+            </div>
+          </div>
+        </section>
+
         <!-- AI QUEUE PANEL -->
         <section
           class="panel queue-panel"
@@ -355,89 +464,6 @@
               <div>
                 <h2>AI Analysis Queue</h2>
 
-        <section
-          class="panel hook-review-panel"
-          data-panel-id="hook-review"
->
-          <div class="panel-header">
-            <div class="panel-title-group">
-              <span class="panel-icon">🎯</span>
-
-              <div>
-                <h2>Hook Candidates</h2>
-                  <p>
-              Review the strongest moments found by LokiClipper.
-                  </p>
-            </div>
-          </div>
-
-        <span
-          class="panel-status"
-          id="hookCount"
-            >
-            0 Found
-          </span>
-        </div>
-
-        <div
-          class="hook-candidate-list"
-          id="hookCandidateList"
-  >
-        <div class="job-queue-empty">
-          Import a video to generate hook candidates.
-          </div>
-        </div>
-      </section>
-
-      <!-- GENERATED CLIPS PANEL -->
-<section
-  class="panel generated-clips-panel"
-  data-panel-id="generated-clips"
->
-  <div class="panel-header">
-    <div class="panel-title-group">
-      <span class="panel-icon">🎬</span>
-
-      <div>
-        <h2>Generated Clips</h2>
-        <p>
-          Clips created from your selected suggestions.
-        </p>
-      </div>
-    </div>
-
-    <span
-      class="panel-status"
-      id="generatedClipCount"
-    >
-      0 Clips
-    </span>
-  </div>
-
-  <div
-    class="generated-clip-list"
-    id="generatedClipList"
-  >
-    <div class="job-queue-empty">
-      Created clips will appear here.
-    </div>
-  </div>
-</section>
-
-        <div class="hook-actions">
-          <button
-            id="createClipBtn"
-            type="button"
-            disabled
-          >
-            ✂ Create Selected Clip
-          </button>
-
-          <span id="clipActionStatus">
-            Select a clip suggestion
-          </span>
-        </div>
-
                 <p>
                   Smart Queue and AI jobs will appear here.
                 </p>
@@ -449,21 +475,59 @@
             </span>
           </div>
 
-        <div class="job-queue-summary">
-          <span id="jobQueueSummary">No processing jobs</span>
-          <span id="jobQueueProgress">0%</span>
+          <div class="job-queue-summary">
+            <span id="jobQueueSummary">
+              No processing jobs
+            </span>
+
+            <span id="jobQueueProgress">
+              0%
+            </span>
+          </div>
+
+          <div
+            class="job-queue-list"
+            id="jobQueueList"
+          >
+            <div class="job-queue-empty">
+              Import a video to begin processing.
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- PROJECTS PAGE -->
+      <section
+        id="projectsView"
+        class="projects-view"
+        hidden
+      >
+        <div class="projects-page-header">
+          <div>
+            <h1>📂 Projects</h1>
+
+            <p>
+              Open and continue working on an existing LokiClipper project.
+            </p>
+          </div>
+
+          <button
+            id="refreshProjectsBtn"
+            type="button"
+          >
+            Refresh Projects
+          </button>
         </div>
 
         <div
-          class="job-queue-list"
-          id="jobQueueList"
+          id="projectsList"
+          class="projects-page-grid"
         >
-  
-        <div class="job-queue-empty">
-            Import a video to begin processing.
+          <div class="job-queue-empty">
+            Loading projects...
           </div>
-        </div>        </section>
-
+        </div>
       </section>
 
       <!-- STATUS BAR -->

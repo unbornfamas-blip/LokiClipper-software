@@ -30,6 +30,14 @@ const {
   detectHooksFromFile
 } = require("../analysis/hookDetector");
 
+const {
+  analyze
+} = require("../voice/voiceAnalyzer");
+
+const {
+  buildExcitementTimeline
+} = require("../analysis/excitementEngine");
+
 const { JobTypes } = require("../jobs/jobTypes"); 
 
 const {
@@ -140,6 +148,12 @@ try {
   "audio.wav"
   );
 
+  const voiceAnalysisPath = path.join(
+  projectRoot,
+  "analysis",
+  "voiceAnalysis.json"
+);
+
   const parsedTranscriptPath = path.join(
   projectRoot,
   "analysis",
@@ -150,6 +164,12 @@ try {
   projectRoot,
   "analysis",
   "hookCandidates.json"
+);
+
+const excitementTimelinePath = path.join(
+  projectRoot,
+  "analysis",
+  "excitementTimeline.json"
 );
 
   const thumbnailJob = createRunningJob(
@@ -245,6 +265,45 @@ try {
 
 }
 
+const voiceAnalysisJob = createRunningJob(
+  JobTypes.VOICE_ANALYSIS,
+  "Analysing voice signals..."
+);
+
+let voiceAnalysis = null;
+
+try {
+  voiceAnalysis = await analyze(
+    audio.outputPath
+  );
+
+  fs.writeFileSync(
+    voiceAnalysisPath,
+    JSON.stringify(
+      voiceAnalysis,
+      null,
+      2
+    ),
+    "utf8"
+  );
+
+  completeJob(
+    voiceAnalysisJob,
+    "Voice analysis completed."
+  );
+} catch (error) {
+  failJob(
+    voiceAnalysisJob,
+    error.message ||
+    "Voice analysis failed."
+  );
+
+  console.error(
+    "Voice analysis failed:",
+    error
+  );
+}
+
 const transcriptJob = createRunningJob(
   JobTypes.TRANSCRIPT,
   "Transcribing audio..."
@@ -305,7 +364,8 @@ if (!parsedTranscript?.outputPath) {
   try {
     hookAnalysis = detectHooksFromFile(
       parsedTranscript.outputPath,
-      hookAnalysisPath
+      hookAnalysisPath,
+      voiceAnalysis
     );
 
     completeJob(
@@ -359,6 +419,20 @@ if (!parsedTranscript?.outputPath) {
       }
       : null,
 
+      voiceAnalysis: voiceAnalysis
+      ? {
+        path: voiceAnalysisPath,
+        averageVolume:
+          voiceAnalysis.averageVolume,
+        peakVolume:
+          voiceAnalysis.peakVolume,
+        silenceCount:
+          voiceAnalysis.silenceMoments.length,
+        formatVersion:
+          voiceAnalysis.formatVersion
+      }
+      : null,
+
     transcript: transcript
       ? {
         path: transcript.jsonPath
@@ -395,6 +469,7 @@ if (!parsedTranscript?.outputPath) {
     JSON.stringify(projectData, null, 2),
     "utf8"
   );
+  
 
   return {
     path: filePath,

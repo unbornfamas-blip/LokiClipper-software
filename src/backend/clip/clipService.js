@@ -1,12 +1,21 @@
 const path = require("path");
 
 const {
+    generateClipTitle,
+    makeSafeFilename
+} = require("./clipTitle");
+
+const {
     calculateClipRange
 } = require("./clipTiming");
 
 const {
     createClip
 } = require("./clipGenerator");
+
+const {
+    expandMoment
+} = require("../analysis/momentExpander");
 
 async function generateClipFromHook({
 
@@ -24,17 +33,33 @@ async function generateClipFromHook({
 
 }) {
 
+    const expandedHook =
+        expandMoment(
+            hook,
+            null
+        );
+
     const clipRange =
         calculateClipRange(
-            hook,
+            expandedHook,
             videoDuration
         );
+
+    const clipTitle =
+    generateClipTitle(
+        transcript
+    );
+
+    const filename =
+        `${makeSafeFilename(
+            clipTitle
+        )}.mp4`;
 
     const outputPath = path.join(
 
         clipsDirectory,
 
-        `clip-${Date.now()}.mp4`
+        filename
 
     );
 
@@ -52,7 +77,7 @@ async function generateClipFromHook({
 
         transcript,
 
-        sourceHook: hook
+        sourceHook: expandedHook
 
     });
 
